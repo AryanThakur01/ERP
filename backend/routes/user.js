@@ -1,8 +1,16 @@
 // /api/v1/auth
 const router = require("express").Router();
-const { loginUser, registerUser } = require("../controllers/user");
+const {
+  loginUser,
+  registerTeacher,
+  registerStudent,
+} = require("../controllers/user");
+const { adminPermission } = require("../middleware/permissions");
 
-router.route("/register").post(registerUser);
+// Only Admins Can Perform
+router.route("/registerTeacher").post(adminPermission, registerTeacher);
+router.route("/registerStudent").post(adminPermission, registerStudent);
+// ----------x-----------x--------x---------------
 router.route("/login").get(loginUser);
 
 module.exports = router;
