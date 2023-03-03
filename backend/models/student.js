@@ -24,6 +24,10 @@ const studentSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       required: "teacher",
     },
+    classRoll: { type: String, required: [true, "Roll.No Missing"] },
+    Course: { type: String, required: [true, "Course Missing"] },
+    Father: { type: String, required: [true, "FatherName Missing"] },
+    Mother: { type: String, required: [true, "MotherName Missing"] },
   },
   { timestamps: true }
 );
