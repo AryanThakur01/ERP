@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-const adminSchema = new mongoose.Schema(
+const teacherSchema = new mongoose.Schema(
   {
     userName: { type: String, required: [true, "UserName Missing"] },
     email: {
@@ -20,30 +20,23 @@ const adminSchema = new mongoose.Schema(
       required: [true, "Password Missing"],
       minlength: [8, "Minimum 8 Characters required"],
     },
-    isTeacher: {
-      type: Boolean,
-      required: [true, "Is Teacher"],
-      default: [true],
-    },
   },
   { timestamps: true }
 );
 
-adminSchema.pre("save", async function () {
+teacherSchema.pre("save", async function () {
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
 });
 
-adminSchema.methods.checkPassword = async function (enteredPassword) {
+teacherSchema.methods.checkPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-adminSchema.methods.createJWT = async function () {
-  return jwt.sign(
-    { _id: this._id, isTeacher: this.isTeacher },
-    process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_LIFETIME }
-  );
+teacherSchema.methods.createJWT = async function () {
+  return jwt.sign({ _id: this._id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_LIFETIME,
+  });
 };
 
-module.exports = mongoose.model("Admin", adminSchema);
+module.exports = mongoose.model("teacher", teacherSchema);
