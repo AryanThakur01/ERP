@@ -22,7 +22,7 @@ const studentSchema = new mongoose.Schema(
     },
     teacher: {
       type: mongoose.Schema.Types.ObjectId,
-      required: "teacher",
+      required: "teacher", // Error!! read and correct
     },
     classRoll: { type: String, required: [true, "Roll.No Missing"] },
     Course: { type: String, required: [true, "Course Missing"] },

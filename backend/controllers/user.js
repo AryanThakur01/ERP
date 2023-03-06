@@ -1,3 +1,4 @@
+// There is a problem in login that the password is being sent to the frontend, this problem need to be solved
 const asyncHandler = require("express-async-handler");
 const Teacher = require("../models/teacher");
 const Student = require("../models/student");
@@ -48,5 +49,3 @@ const loginUser = asyncHandler(async (req, res) => {
   res.status(200).json({ message: "Recheck Your UserName And Password" });
 });
 module.exports = { loginUser, registerTeacher, registerStudent };
-
-// There is a problem in login that the password is being sent to the frontend, this problem need to be solved
