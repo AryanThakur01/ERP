@@ -4,7 +4,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const attendanceSchema = new mongoose.Schema({
-  _id: { type: mongoose.Schema.Types.ObjectId, ref: "student" },
+  student_id: { type: mongoose.Schema.Types.ObjectId, ref: "student" },
   isSelf: { type: Boolean, default: true },
   Attendance: { type: Object },
   TotalClasses: {
