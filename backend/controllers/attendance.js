@@ -6,6 +6,18 @@
 const Attendance = require("../models/attendance");
 const expressAsyncHandler = require("express-async-handler");
 
+const addSubjects = expressAsyncHandler(async (req, res) => {
+  const { student_id, subjects } = req.body;
+  const addTo = await Attendance.findOneAndUpdate(
+    { student_id, isSelf: false },
+    // { $push: { Attendance: subjects } },
+    { $push: { Attendance: subjects } },
+    { new: true }
+  );
+
+  res.status(200).json({ addTo });
+});
+
 const WriteStudentAttendance = expressAsyncHandler(async (req, res) => {
   const { date, data } = req.body;
   let updatedData;
@@ -15,7 +27,7 @@ const WriteStudentAttendance = expressAsyncHandler(async (req, res) => {
       uploadAttendance[key] = { [date]: element.Attendance[key] };
     }
     const query = {
-      _id: element._id,
+      student_id: element._id,
       isSelf: element.isSelf,
       Attendance: {},
       semester: element.semester,
@@ -23,10 +35,9 @@ const WriteStudentAttendance = expressAsyncHandler(async (req, res) => {
       Present: 0,
     };
     updatedData = await Attendance.findOneAndUpdate(
-      { _id: element._id },
+      { _id: element._id, isSelf: false },
       query,
       {
-        upsert: true,
         new: true,
       }
     );
@@ -44,4 +55,4 @@ const WriteStudentAttendance = expressAsyncHandler(async (req, res) => {
     => Daily Attendance
  */
 
-module.exports = { WriteStudentAttendance };
+module.exports = { WriteStudentAttendance, addSubjects };
