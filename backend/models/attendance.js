@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 const attendanceSchema = new mongoose.Schema({
   student_id: { type: mongoose.Schema.Types.ObjectId, ref: "student" },
   isSelf: { type: Boolean, default: true },
-  Attendance: { type: Object },
+  Attendance: { type: Array },
   TotalClasses: {
     type: Number,
     required: [true, "SemesterTotal Missing"],

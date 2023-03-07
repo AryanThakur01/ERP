@@ -6,44 +6,65 @@
 const Attendance = require("../models/attendance");
 const expressAsyncHandler = require("express-async-handler");
 
-const addSubjects = expressAsyncHandler(async (req, res) => {
-  const { student_id, subjects } = req.body;
-  const addTo = await Attendance.findOneAndUpdate(
+const addSubject = expressAsyncHandler(async (req, res) => {
+  const { student_id, subject } = req.body;
+  if (typeof subject !== "string")
+    throw new Error("Subject Name Should be string");
+  let updatedAttendance = await Attendance.findOneAndUpdate(
     { student_id, isSelf: false },
-    // { $push: { Attendance: subjects } },
-    { $push: { Attendance: subjects } },
+    // { Attendance: [] },
+    {
+      $push: {
+        Attendance: { [subject]: [] },
+      },
+    },
     { new: true }
   );
+  updatedAttendance = updatedAttendance.Attendance;
 
-  res.status(200).json({ addTo });
+  res.status(200).json({ attendanceList: updatedAttendance });
+  return;
+});
+
+const removeSubject = expressAsyncHandler(async (req, res) => {
+  const { student_id, subject } = req.body;
+  let removeSubject = await Attendance.findOneAndUpdate(
+    { student_id, isSelf: false },
+    {
+      $pull: {
+        Attendance: { [subject]: [] },
+      },
+    },
+    { new: true }
+  );
+  removeSubject = removeSubject.Attendance;
+  res.status(200).json({ attendanceList: removeSubject });
 });
 
 const WriteStudentAttendance = expressAsyncHandler(async (req, res) => {
   const { date, data } = req.body;
   let updatedData;
   data.forEach(async (element) => {
-    let uploadAttendance = {};
-    for (const key in element.Attendance) {
-      uploadAttendance[key] = { [date]: element.Attendance[key] };
-    }
-    const query = {
-      student_id: element._id,
-      isSelf: element.isSelf,
-      Attendance: {},
-      semester: element.semester,
-      TotalClasses: 0,
-      Present: 0,
-    };
-    updatedData = await Attendance.findOneAndUpdate(
-      { _id: element._id, isSelf: false },
-      query,
+    let attendance = await Attendance.findOneAndUpdate(
       {
-        new: true,
-      }
+        student_id: [element.student_id],
+        isSelf: false,
+      },
+      {
+        $setOnInsert: {
+          Attendance: {
+            subject: element.subject,
+            date: date,
+            attendance: element.attendance,
+          },
+        },
+        // Attendance: [],
+      },
+      { new: true }
     );
   });
 
-  res.status(200).json({ updatedData });
+  res.status(200).json({ message: "SUCCESSFUL" });
 });
 
 /**
@@ -55,4 +76,4 @@ const WriteStudentAttendance = expressAsyncHandler(async (req, res) => {
     => Daily Attendance
  */
 
-module.exports = { WriteStudentAttendance, addSubjects };
+module.exports = { WriteStudentAttendance, addSubject, removeSubject };
