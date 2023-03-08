@@ -1,6 +1,7 @@
+const jwt = require("jsonwebtoken");
 const expressAsyncHandler = require("express-async-handler");
 
-const authenticate = expressAsyncHandler(async () => {
+const authenticate = expressAsyncHandler(async (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     throw new Error("Authentication invalid");

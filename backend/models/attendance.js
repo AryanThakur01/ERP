@@ -11,17 +11,17 @@ const SubjectSchema = new mongoose.Schema({
 
 const attendanceSchema = new mongoose.Schema({
   student_id: { type: mongoose.Schema.Types.ObjectId, ref: "student" },
-  isSelf: { type: Boolean, default: true },
-  Attendance: [SubjectSchema],
-  TotalClasses: {
-    type: Number,
-    required: [true, "SemesterTotal Missing"],
+  isSelf: {
+    type: Boolean,
+    default: true,
+    required: [true, "Teacher or student?"],
   },
-  Present: {
-    type: Number,
-    required: [true, "SemesterTotal Missing"],
+  Subject: { type: String, required: [true, "SubjectName Missing"] },
+  Status: { type: String, enum: ["P", "A", "L"] },
+  date: {
+    type: String,
+    required: [true, "Date Missing"],
   },
-  semester: { type: Number, required: [true, "Semester Missing"] },
 });
 
 module.exports = mongoose.model("attendance", attendanceSchema);
