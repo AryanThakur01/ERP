@@ -43,25 +43,23 @@ const removeSubject = expressAsyncHandler(async (req, res) => {
 
 const WriteStudentAttendance = expressAsyncHandler(async (req, res) => {
   const { date, data } = req.body;
-  let updatedData;
   data.forEach(async (element) => {
-    let attendance = await Attendance.findOneAndUpdate(
-      {
-        student_id: [element.student_id],
-        isSelf: false,
-      },
-      {
-        $setOnInsert: {
-          Attendance: {
-            subject: element.subject,
-            date: date,
-            attendance: element.attendance,
-          },
+    const filter = { student_id: element.student_id, isSelf: false };
+    const update = {
+      $set: {
+        Attendance: {
+          subject: element.subject,
+          date: date,
+          presence: element.attendance,
         },
-        // Attendance: [],
       },
-      { new: true }
-    );
+    };
+    const options = {
+      upsert: true,
+      new: true,
+    };
+
+    await Attendance.findOneAndUpdate(filter, update, options);
   });
 
   res.status(200).json({ message: "SUCCESSFUL" });
