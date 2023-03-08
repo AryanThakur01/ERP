@@ -10,7 +10,9 @@ const { connectDB } = require("./db/connect");
 app.use(express.json());
 
 const userRoutes = require("./routes/user");
+const studentAttendanceRoutes = require("./routes/attendance");
 app.use("/api/v1/auth", userRoutes);
+app.use("/api/v1/studentAttendance", studentAttendanceRoutes);
 app.use(errorHandlerMiddleware);
 app.use(NotFoundMiddleware);
 

@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const Admin = require("../models/admin");
-const Teacher = require("../models/student");
+const Teacher = require("../models/teacher");
 const expressAsyncHandler = require("express-async-handler");
 
 const adminPermission = expressAsyncHandler(async (req, res, next) => {
@@ -34,7 +34,9 @@ const teacherPermission = expressAsyncHandler(async (req, res, next) => {
 
     const admin = await Admin.findById(payload._id);
     const teacher = await Teacher.findById(payload._id);
-    if (!teacher && !admin) throw new Error();
+    if (!teacher && !admin) {
+      throw new Error();
+    }
     req._id = payload._id;
     next();
   } catch (error) {

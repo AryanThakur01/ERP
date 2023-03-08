@@ -1,3 +1,4 @@
+// There is a problem in login that the password is being sent to the frontend, this problem need to be solved
 const asyncHandler = require("express-async-handler");
 const Teacher = require("../models/teacher");
 const Student = require("../models/student");
@@ -16,6 +17,16 @@ const registerTeacher = asyncHandler(async (req, res) => {
 const registerStudent = asyncHandler(async (req, res) => {
   const student = await Student.create(req.body);
   const token = await student.createJWT();
+  for (let index = 0; index < 2; index++) {
+    Attendance.create({
+      student_id: s._id,
+      isSelf: index ? true : false,
+      TotalClasses: 0,
+      Present: 0,
+      semester: s.semester || 1,
+      Attendance: {},
+    });
+  }
   res
     .status(200)
     .json({ userName: student.userName, email: student.email, token });
@@ -48,5 +59,3 @@ const loginUser = asyncHandler(async (req, res) => {
   res.status(200).json({ message: "Recheck Your UserName And Password" });
 });
 module.exports = { loginUser, registerTeacher, registerStudent };
-
-// There is a problem in login that the password is being sent to the frontend, this problem need to be solved
