@@ -6,8 +6,6 @@ const {
   removeSubject,
 } = require("../controllers/attendance");
 
-router.route("/").put(teacherPermission, WriteStudentAttendance);
-router.route("/addsubjects").post(teacherPermission, addSubject);
-router.route("/removesubject").put(teacherPermission, removeSubject);
+router.route("/").post(teacherPermission, WriteStudentAttendance);
 
 module.exports = router;
