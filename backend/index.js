@@ -9,6 +9,14 @@ const { connectDB } = require("./db/connect");
 
 app.use(express.json());
 
+const cors = require("cors");
+app.use(
+  cors({
+    origin: ["http://localhost:3000", "http://localhost:3000/dashboard"],
+    optionsSuccessStatus: 200,
+  })
+);
+
 const userRoutes = require("./routes/user");
 const studentAttendanceRoutes = require("./routes/attendance");
 app.use("/api/v1/auth", userRoutes);

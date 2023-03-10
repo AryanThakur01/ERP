@@ -36,6 +36,7 @@ const registerStudent = asyncHandler(async (req, res) => {
 const loginUser = asyncHandler(async (req, res) => {
   let student = await Student.findOne({ email: req.body.email });
   if (student && (await student.checkPassword(req.body.password))) {
+    student.password = "";
     student = await Teacher.populate(student, {
       path: "teacher",
       select: "-password",
@@ -47,15 +48,17 @@ const loginUser = asyncHandler(async (req, res) => {
 
   let teacher = await Teacher.findOne({ email: req.body.email });
   if (teacher && (await teacher.checkPassword(req.body.password))) {
+    teacher.password = "";
     const token = await teacher.createJWT();
     return res.status(200).json({ user: teacher, token });
   }
 
   let admin = await Admin.findOne({ email: req.body.email });
   if (admin && (await admin.checkPassword(req.body.password))) {
+    admin.password = "";
     const token = await admin.createJWT();
     return res.status(200).json({ user: admin, token });
   }
-  res.status(200).json({ message: "Recheck Your UserName And Password" });
+  res.status(400).json({ message: "Recheck Your UserName And Password" });
 });
 module.exports = { loginUser, registerTeacher, registerStudent };

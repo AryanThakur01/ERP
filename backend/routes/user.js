@@ -11,6 +11,6 @@ const { adminPermission } = require("../middleware/permissions");
 router.route("/registerTeacher").post(adminPermission, registerTeacher);
 router.route("/registerStudent").post(adminPermission, registerStudent);
 // ----------x-----------x--------x---------------
-router.route("/login").get(loginUser);
+router.route("/login").post(loginUser);
 
 module.exports = router;
