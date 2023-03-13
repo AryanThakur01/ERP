@@ -17,7 +17,7 @@ const WriteStudentAttendance = expressAsyncHandler(async (req, res) => {
       student_id: element.student_id,
       isSelf: false,
       Subject: element.subject,
-      date: new Date(`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`),
+      date: new Date(`${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`),
     };
     const update = { $set: { Status: element.attendance } };
     const options = { upsert: true, new: true };
@@ -27,6 +27,35 @@ const WriteStudentAttendance = expressAsyncHandler(async (req, res) => {
   });
 
   res.status(200).json({ message: "Update Successful" });
+});
+
+const WriteSelfAttendance = expressAsyncHandler(async (req, res) => {
+  const { date, data } = req.body;
+  const _id = req.user._id;
+
+  const d = new Date(date);
+  data.subject = data.subject.trim();
+  data.attendance = data.attendance.trim();
+  if (isNaN(d.getFullYear())) {
+    throw new Error("Invalid Date");
+  }
+  if (!data.subject) {
+    throw new Error("Provide subject Name");
+  }
+  if (!data.attendance) {
+    throw new Error("attendanceStatus Missing");
+  }
+  const filter = {
+    student_id: _id,
+    isSelf: true,
+    Subject: data.subject,
+    date: new Date(`${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`),
+  };
+  const update = { $set: { Status: data.attendance } };
+  const options = { upsert: true, new: true };
+  const a = await Attendance.updateOne(filter, update, options);
+
+  res.status(200).json({ message: "Update Successful", a });
 });
 
 /**
@@ -45,4 +74,86 @@ const officialAttendance = expressAsyncHandler(async (req, res) => {
   res.status(200).json({ attendance });
 });
 
-module.exports = { WriteStudentAttendance, officialAttendance };
+// Self Attendance
+const selfAttendance = expressAsyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  const attendance = await Attendance.find({ student_id: _id, isSelf: true });
+
+  let Present = [],
+    Absent = [],
+    Leave = [];
+  attendance.forEach((e) => {
+    switch (e.Status) {
+      case "P":
+        Present.push(e);
+        break;
+      case "A":
+        Absent.push(e);
+        break;
+      case "L":
+        Leave.push(e);
+        break;
+
+      default:
+        break;
+    }
+  });
+
+  res.status(200).json({ Present, Absent, Leave });
+});
+
+const subjectAttendanceData = expressAsyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  const { subjectName } = req.query;
+
+  const attendance = await Attendance.find({
+    student_id: _id,
+    isSelf: true,
+    Subject: subjectName,
+  });
+  let Present = [],
+    Absent = [],
+    Leave = [];
+  attendance.forEach((e) => {
+    switch (e.Status) {
+      case "P":
+        Present.push(e);
+        break;
+      case "A":
+        Absent.push(e);
+        break;
+      case "L":
+        Leave.push(e);
+        break;
+
+      default:
+        break;
+    }
+  });
+  Present.push;
+
+  res.status(200).json({
+    Present: { Present, length: Present.length },
+    Absent: { Absent, length: Absent.length },
+    Leave: { Leave, length: Leave.length },
+  });
+});
+
+const selfSubjects = expressAsyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  const subjectList = await Attendance.distinct("Subject", {
+    student_id: _id,
+    isSelf: true,
+  });
+
+  res.status(200).json({ subjectList });
+});
+
+module.exports = {
+  WriteStudentAttendance,
+  officialAttendance,
+  WriteSelfAttendance,
+  selfAttendance,
+  selfSubjects,
+  subjectAttendanceData,
+};

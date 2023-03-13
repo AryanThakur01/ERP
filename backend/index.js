@@ -12,7 +12,11 @@ app.use(express.json());
 const cors = require("cors");
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://localhost:3000/dashboard"],
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:3000/dashboard",
+      "http://localhost:3000/selfattendance",
+    ],
     optionsSuccessStatus: 200,
   })
 );
