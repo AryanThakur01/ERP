@@ -1,0 +1,111 @@
+* {
+  box-sizing: border-box;
+}
+.circleContainer {
+  transform-style: preserve-3d;
+}
+
+:root {
+  --g: 4px solid green;
+  --b: 4px solid blue;
+  --o: 4px solid orangered;
+  --p: 4px solid purple;
+}
+
+.circle1 {
+  border-bottom: var(--g);
+  border-top: var(--b);
+  border-right: var(--o);
+  border-left: var(--p);
+  border-radius: 50%;
+  transform: rotate3d(1, -1, 0, 45deg);
+  position: absolute;
+  margin: 0px auto;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 300px;
+  height: 300px;
+  animation: load1 2s linear infinite;
+}
+@keyframes load1 {
+  0% {
+    transform: rotate3d(1, 1, 0, 0deg);
+  }
+  100% {
+    transform: rotate3d(1, 1, 1, 360deg);
+  }
+}
+.circle2 {
+  border-bottom: var(--g);
+  border-top: var(--b);
+  border-right: var(--o);
+  border-left: var(--p);
+  border-radius: 50%;
+  transform: rotate3d(1, -1, 0, 45deg);
+  position: absolute;
+  margin: 0px auto;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 300px;
+  height: 300px;
+  animation: load2 2s linear infinite -0.8s;
+}
+@keyframes load2 {
+  0% {
+    transform: rotate3d(1, 1, 0, 0deg);
+  }
+  100% {
+    transform: rotate3d(1, 1, 1, 360deg);
+  }
+}
+.circle3 {
+  border-bottom: var(--g);
+  border-top: var(--b);
+  border-right: var(--o);
+  border-left: var(--p);
+  border-radius: 50%;
+  transform: rotate3d(1, -1, 0, 45deg);
+  position: absolute;
+  margin: 0px auto;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 300px;
+  height: 300px;
+  animation: load3 1s linear infinite -0.6s;
+}
+@keyframes load3 {
+  0% {
+    transform: rotate3d(1, 1, 0, 0deg);
+  }
+  100% {
+    transform: rotate3d(1, 1, 1, 360deg);
+  }
+}
+
+.loading {
+  position: absolute;
+  margin: 100px auto;
+  padding-left: 25px;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  font-size: 3rem;
+  width: 300px;
+  animation: wordColor 1s linear infinite -0.8s;
+}
+@keyframes wordColor {
+  0%,
+  100% {
+    color: white;
+  }
+  50% {
+    color: gray;
+  }
+}

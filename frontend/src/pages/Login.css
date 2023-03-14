@@ -1,0 +1,16 @@
+.Login {
+  min-height: max(100vh, 500px);
+  padding-top: 100px;
+  background-color: #00000078;
+}
+
+.Login::before {
+  background: url("./homeBg.jpg") no-repeat center center/cover;
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  min-height: max(100vh, 500px);
+  z-index: -11;
+}
