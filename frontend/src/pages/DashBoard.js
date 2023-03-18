@@ -55,6 +55,7 @@ const DashBoard = () => {
             : 0) *
             100) /
           subjectTotal[element.Subject];
+        console.log(subjectPercent);
       }
     });
     setSubjectPercent(subjectPercentage);

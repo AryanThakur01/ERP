@@ -22,12 +22,24 @@ const studentSchema = new mongoose.Schema(
     },
     teacher: {
       type: mongoose.Schema.Types.ObjectId,
-      required: "teacher", // Error!! read and correct
+      ref: "teacher",
     },
-    classRoll: { type: String, required: [true, "Roll.No Missing"] },
-    Course: { type: String, required: [true, "Course Missing"] },
-    Father: { type: String, required: [true, "FatherName Missing"] },
-    Mother: { type: String, required: [true, "MotherName Missing"] },
+    classRoll: {
+      type: String,
+      required: [true, "Roll.No Missing"],
+      default: "-",
+    },
+    course: { type: String, required: [true, "Course Missing"], default: "-" },
+    father: {
+      type: String,
+      required: [true, "FatherName Missing"],
+      default: "-",
+    },
+    mother: {
+      type: String,
+      required: [true, "MotherName Missing"],
+      default: "-",
+    },
   },
   { timestamps: true }
 );

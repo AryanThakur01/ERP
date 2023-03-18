@@ -1,6 +1,6 @@
-import "./Login.css";
 import React, { useEffect, useState } from "react";
 import {
+  Box,
   Button,
   Container,
   FormControl,
@@ -54,56 +54,55 @@ const Login = () => {
     setLoading(false);
   };
 
+  const handleGuest = async () => {
+    setEmail("kiwiros222@huvacliq.com");
+    setPassword("190290@11");
+  };
+
   useEffect(() => {
     if (localStorage.getItem("token")) navigate("/home");
   }, []);
 
   return (
     <div className="Login">
-      <Container
-        bgColor="blackAlpha.600"
-        backdropFilter="blur(20px)"
-        padding="20px 1.5rem"
-        borderRadius="20px"
+      <VStack
+        color="white"
+        divider={<StackDivider borderStyle="revert" />}
+        spacing={2}
       >
-        <VStack
-          color="white"
-          divider={<StackDivider borderStyle="revert" />}
-          spacing={4}
-          align="stretch"
-        >
-          <FormControl>
-            <FormLabel>Email address</FormLabel>
+        <FormControl>
+          <FormLabel>Email address</FormLabel>
+          <Input
+            value={email}
+            type="email"
+            placeholder="Enter Your Email"
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </FormControl>
+        <FormControl>
+          <FormLabel>Password</FormLabel>
+          <InputGroup>
             <Input
-              value={email}
-              type="email"
-              placeholder="Enter Your Email"
-              onChange={(e) => setEmail(e.target.value)}
+              value={password}
+              placeholder="password"
+              type={show ? "text" : "password"}
+              onChange={(e) => setPassword(e.target.value)}
             />
-          </FormControl>
-          <FormControl>
-            <FormLabel>Password</FormLabel>
-            <InputGroup>
-              <Input
-                value={password}
-                placeholder="password"
-                type={show ? "text" : "password"}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <InputRightElement width="4.5rem">
-                <Button
-                  h="1.85rem"
-                  size="sm"
-                  onClick={showPassword}
-                  color={show ? "green" : "black"}
-                >
-                  Show
-                </Button>
-              </InputRightElement>
-            </InputGroup>
-          </FormControl>
+            <InputRightElement width="4.5rem">
+              <Button
+                h="1.85rem"
+                size="sm"
+                onClick={showPassword}
+                color={show ? "green" : "black"}
+              >
+                Show
+              </Button>
+            </InputRightElement>
+          </InputGroup>
+        </FormControl>
+        <Box display="flex" justifyContent="space-between" width="100%">
           <Button
-            width="140px"
+            width="120px"
             colorScheme="green"
             alignSelf="center"
             isLoading={loading}
@@ -112,8 +111,18 @@ const Login = () => {
           >
             Submit
           </Button>
-        </VStack>
-      </Container>
+          <Button
+            // width="140px"
+            colorScheme="blackAlpha"
+            alignSelf="center"
+            isLoading={loading}
+            spinner={<Spinner size="md" color="white" />}
+            onClick={handleGuest}
+          >
+            Test Student
+          </Button>
+        </Box>
+      </VStack>
     </div>
   );
 };

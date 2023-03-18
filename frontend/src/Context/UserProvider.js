@@ -4,7 +4,7 @@ const UserContext = createContext();
 
 const UserProvider = ({ children }) => {
   const [user, setUser] = useState("");
-  const domain = "https://erp-self.netlify.app/.netlify/functions";
+  const domain = "http://localhost:5000";
 
   return (
     <UserContext.Provider value={{ domain, user, setUser }}>

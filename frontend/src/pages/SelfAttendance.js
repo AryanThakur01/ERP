@@ -117,9 +117,9 @@ const SelfAttendance = () => {
   useEffect(() => {
     fetchSubjects();
     // eslint-disable-next-line
-    {
-      console.log(subjectAttendance);
-    }
+    // {
+    //   console.log(subjectAttendance);
+    // }
   }, [attendance]);
 
   return (

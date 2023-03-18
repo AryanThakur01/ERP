@@ -1,6 +1,6 @@
 import "./App.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Login from "./pages/Login";
+import LoginRegister from "./pages/LoginRegister";
 import { Box } from "@chakra-ui/react";
 import { ChakraProvider } from "@chakra-ui/react";
 import Home from "./pages/Home";
@@ -17,7 +17,7 @@ function App() {
           <UserProvider>
             <AttendanceProvider>
               <Routes>
-                <Route exact path="/" element={<Login />} />
+                <Route exact path="/" element={<LoginRegister />} />
                 <Route exact path="/home" element={<Home />} />
                 <Route exact path="/dashboard" element={<DashBoard />} />
                 <Route

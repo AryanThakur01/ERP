@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   ButtonGroup,
+  IconButton,
   Modal,
   ModalBody,
   ModalContent,
@@ -10,12 +11,15 @@ import {
   ModalOverlay,
   useDisclosure,
   useToast,
+  Icon,
+  Spinner,
 } from "@chakra-ui/react";
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Calendar } from "react-calendar";
 import { AttendanceState } from "../Context/AttendanceProvider";
 import { UserState } from "../Context/UserProvider";
+import { DeleteOutline, Close, AttachEmail } from "@mui/icons-material";
 import "./Calendar.css";
 
 const AttendanceModal = ({ children, subjectName, attendanceFunction }) => {
@@ -27,6 +31,7 @@ const AttendanceModal = ({ children, subjectName, attendanceFunction }) => {
   const [dayAttendance, setDayAttendance] = useState("");
   const { domain } = UserState();
   const { attendance } = AttendanceState();
+  const { user } = UserState();
   const attendanceOptions = ["P", "A", "L"];
   const toast = useToast();
   const writeSelfAttendance = async (date) => {
@@ -48,7 +53,6 @@ const AttendanceModal = ({ children, subjectName, attendanceFunction }) => {
         config
       );
       attendanceFunction();
-
       toast({
         title: "Successfully Updated",
         status: "success",
@@ -67,7 +71,7 @@ const AttendanceModal = ({ children, subjectName, attendanceFunction }) => {
   };
 
   const filterData = async () => {
-    onOpen();
+    // console.log(localStorage.getItem("user").search("classRoll") < 0);
     const present = new Set();
     const absent = new Set();
     const leave = new Set();
@@ -90,17 +94,20 @@ const AttendanceModal = ({ children, subjectName, attendanceFunction }) => {
       setLeave(leave);
       return;
     }
-    // console.log("moshi moshi");
     for (const key in attendance) {
       if (attendance[key].Subject === subjectName) {
         if (attendance[key].Status === "P") {
-          present.add(attendance[key].date);
+          let p = new Date(attendance[key].date);
+          present.add(p.toDateString());
         } else if (attendance[key].Status === "A") {
-          absent.add(attendance[key].date);
+          let a = new Date(attendance[key].date);
+          absent.add(a.toDateString());
         } else if (attendance[key].Status === "L") {
-          leave.add(attendance[key].date);
+          let l = new Date(attendance[key].date);
+          leave.add(l.toDateString());
         }
       }
+      // console.log(leave);
       setPresent(present);
       setAbsent(absent);
       setLeave(leave);
@@ -130,9 +137,73 @@ const AttendanceModal = ({ children, subjectName, attendanceFunction }) => {
     }
   };
 
+  const DeleteSubject = async () => {
+    try {
+      const config = {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      };
+      const res = await axios.delete(
+        `${domain}/api/v1/studentAttendance/removeSubject?subject=${subjectName}`,
+        config
+      );
+      onClose();
+      attendanceFunction();
+    } catch (error) {
+      toast({
+        title: error.message,
+        description: "Unable to delete the subject",
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+      });
+    }
+  };
+  const DeleteAttendance = async () => {
+    try {
+      const config = {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      };
+      const res = await axios.delete(
+        `${domain}/api/v1/studentAttendance/deleteSelfAttendance?date=${day.toDateString()}`,
+        config
+      );
+      // console.log(day, attendance);
+      attendanceFunction();
+      toast({
+        title: "Successfully Updated",
+        status: "success",
+        duration: 4000,
+        isClosable: true,
+      });
+    } catch (error) {
+      toast({
+        title: error.message,
+        description: "Unable to delete the subject",
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+      });
+    }
+  };
+
+  useEffect(() => {
+    filterData();
+  }, [attendance]);
+
   return (
     <>
-      <span onClick={filterData}>{children}</span>
+      <span
+        onClick={() => {
+          onOpen();
+          filterData();
+        }}
+      >
+        {children}
+      </span>
       <Modal
         onClose={onClose}
         isOpen={isOpen}
@@ -145,8 +216,27 @@ const AttendanceModal = ({ children, subjectName, attendanceFunction }) => {
           bgColor="blackAlpha.800"
           backdropFilter="blur(5px)"
         >
-          <ModalHeader color="white">
-            {subjectName ? subjectName : "Total"}
+          <ModalHeader
+            color="white"
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <Box>{subjectName ? subjectName : "Total"}</Box>
+            <Box>
+              <IconButton
+                color="red.300"
+                variant="outline"
+                border="none"
+                _hover={{
+                  backgroundColor: "blackAlpha.300",
+                  cursor: "pointer",
+                }}
+                size="sm"
+                as={Close}
+                onClick={onClose}
+              />
+            </Box>
           </ModalHeader>
           <ModalBody justifyContent="center">
             {subjectName ? (
@@ -154,11 +244,12 @@ const AttendanceModal = ({ children, subjectName, attendanceFunction }) => {
                 <Calendar
                   // onChange={setToday}
                   tileClassName={({ activeStartDate, date, view }) => {
-                    if (present.has(`${date}`)) {
+                    const d = date.toDateString();
+                    if (present.has(`${d}`)) {
                       return "present";
-                    } else if (absent.has(`${date}`)) {
+                    } else if (absent.has(`${d}`)) {
                       return "absent";
-                    } else if (leave.has(`${date}`)) {
+                    } else if (leave.has(`${d}`)) {
                       return "leave";
                     }
                   }}
@@ -168,7 +259,7 @@ const AttendanceModal = ({ children, subjectName, attendanceFunction }) => {
             ) : (
               <></>
             )}
-            {subjectName ? (
+            {!attendance[0] && subjectName ? (
               <Box
                 padding="20px 25px"
                 color="white"
@@ -205,6 +296,7 @@ const AttendanceModal = ({ children, subjectName, attendanceFunction }) => {
                       {e}
                     </Button>
                   ))}
+
                   <Button
                     variant="ghost"
                     colorScheme="purple"
@@ -216,16 +308,44 @@ const AttendanceModal = ({ children, subjectName, attendanceFunction }) => {
                   >
                     Save
                   </Button>
+                  <Button
+                    variant="outline"
+                    border="none"
+                    colorScheme="purple"
+                    onClick={DeleteAttendance}
+                    color="red.400"
+                    _hover={{
+                      bgColor: "transparent",
+                      color: "red.600",
+                    }}
+                    paddingInline="0"
+                  >
+                    <Icon as={DeleteOutline} />
+                  </Button>
                 </ButtonGroup>
               </Box>
             ) : (
               <></>
             )}
+            <Box px="25px" my="10px">
+              <Box color="white">
+                TOTAL CLASSES: {present.size + absent.size + leave.size}
+              </Box>
+              <Box color="green.500">PRESENT: {present.size}</Box>
+              <Box color="red.500">ABSENT: {absent.size}</Box>
+              <Box color="orange.500">LEAVE: {leave.size}</Box>
+            </Box>
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onClose}>
-              Close
-            </Button>
+            <Box>
+              {!attendance[0] && subjectName ? (
+                <Button colorScheme="red" mr={3} onClick={DeleteSubject}>
+                  Remove
+                </Button>
+              ) : (
+                <></>
+              )}
+            </Box>
           </ModalFooter>
         </ModalContent>
       </Modal>

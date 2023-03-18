@@ -58,9 +58,9 @@ const SideDrawer = ({ children }) => {
             >
               Self Attendance
             </Button>
-            <Button style={STYLES} _hover={{ color: "white" }}>
+            {/* <Button style={STYLES} _hover={{ color: "white" }}>
               FeedBack
-            </Button>
+            </Button> */}
             <DrawerFooter>
               <Button
                 style={STYLES}

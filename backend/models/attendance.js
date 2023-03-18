@@ -17,7 +17,11 @@ const attendanceSchema = new mongoose.Schema({
     required: [true, "Teacher or student?"],
   },
   Subject: { type: String, required: [true, "SubjectName Missing"] },
-  Status: { type: String, enum: ["P", "A", "L"] },
+  Status: {
+    type: String,
+    enum: ["P", "A", "L"],
+    required: [true, "Status Missing"],
+  },
   date: {
     type: String,
     required: [true, "Date Missing"],

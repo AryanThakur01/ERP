@@ -1,10 +1,10 @@
-.Login {
+.loginRegister {
   min-height: max(100vh, 500px);
-  padding-top: 100px;
+  padding-top: 20px;
   background-color: #00000078;
 }
 
-.Login::before {
+.loginRegister::before {
   background: url("./homeBg.jpg") no-repeat center center/cover;
   content: "";
   position: absolute;

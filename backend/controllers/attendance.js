@@ -13,11 +13,15 @@ const WriteStudentAttendance = expressAsyncHandler(async (req, res) => {
     throw new Error("Invalid Date");
   }
   data.forEach(async (element) => {
+    if (!["P", "A", "L"].includes(element.attendance)) {
+      return;
+    }
+
     const filter = {
       student_id: element.student_id,
       isSelf: false,
       Subject: element.subject,
-      date: new Date(`${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`),
+      date: d.toDateString(),
     };
     const update = { $set: { Status: element.attendance } };
     const options = { upsert: true, new: true };
@@ -49,7 +53,7 @@ const WriteSelfAttendance = expressAsyncHandler(async (req, res) => {
     student_id: _id,
     isSelf: true,
     Subject: data.subject,
-    date: new Date(`${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`),
+    date: d.toDateString(),
   };
   const update = { $set: { Status: data.attendance } };
   const options = { upsert: true, new: true };
@@ -149,6 +153,16 @@ const selfSubjects = expressAsyncHandler(async (req, res) => {
   res.status(200).json({ subjectList });
 });
 
+const removeSelfSubject = expressAsyncHandler(async (req, res) => {
+  const message = await Attendance.deleteMany({ Subject: req.query.subject });
+  res.status(200).json({ msg: message });
+});
+const deleteSelfAttendance = expressAsyncHandler(async (req, res) => {
+  console.log(req.query);
+  const message = await Attendance.deleteOne({ date: req.query.date });
+  res.status(200).json({ msg: message });
+});
+
 module.exports = {
   WriteStudentAttendance,
   officialAttendance,
@@ -156,4 +170,6 @@ module.exports = {
   selfAttendance,
   selfSubjects,
   subjectAttendanceData,
+  removeSelfSubject,
+  deleteSelfAttendance,
 };
